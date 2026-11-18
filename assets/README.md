@@ -2,14 +2,17 @@
 
 The project loads these files (first match wins; `.png .jpg .jpeg .webp .avif .bmp .tif`):
 
-| Character | File stem | Currently in use |
+| Character | File stem | Developed with (approx. size) |
 |---|---|---|
-| Daniel Craig, *No Time to Die* | `daniel_craig.*` | `daniel_craig.avif` (1600x800) |
-| Craig's final stance (wide shot) | `daniel_craig_full_shot.*` | `daniel_craig_full_shot.png` (1588x741) |
-| Robert Pattinson, Bond announcement portrait | `robert_pattinson.*` | `robert_pattinson.webp` (1000x667) |
+| Daniel Craig, *No Time to Die* close-up | `daniel_craig.*` | AVIF, 1600x800 |
+| Craig's final stance (wide shot) | `daniel_craig_full_shot.*` | PNG, 1588x741 |
+| Robert Pattinson, Bond announcement portrait | `robert_pattinson.*` | WebP, 1000x667 |
 
-These are the photographs supplied by the project owner. They are used only as local input;
-this repository does not download, bundle or redistribute any other imagery.
+**These images are not included in the repository** (they are copyrighted, and `assets/*.png|jpg|webp|avif`
+is git-ignored). Supply your own copies; the framing coordinates in `config/settings.py` were tuned for
+images of roughly these sizes and compositions, so other crops may need adjusting (see below). They are used only as
+local input; this project does not download or redistribute any imagery.
+`python main.py --placeholder` runs with abstract stand-ins instead (not likenesses).
 
 ## Provenance / further reference (not downloaded)
 - Pattinson announcement imagery: https://www.aboutamazon.com/news/entertainment/james-bond-robert-pattinson-cast-amazon-mgm-film

@@ -3,25 +3,36 @@
 
 One Bond dies. Another emerges. The legacy continues.
 
-The whole ~60 s sequence is rendered **as terminal characters** — no video, GIF, audio or GUI.
+The whole ~58 s sequence is rendered **as terminal characters** — no video, GIF, audio or GUI.
 You screen-record it with your phone and lay the song over it afterwards.
+
+> **Unofficial fan tribute.** This is an independent, non-commercial fan project. It is not affiliated with,
+> authorized by, or endorsed by Amazon MGM Studios, Eon Productions, the makers of *No Time to Die*, or anyone
+> featured. *James Bond*, *007*, *No Time to Die* and related names, characters, images and music are the
+> property of their respective owners. No original film frames, photographs or audio are included in this
+> repository: the reference photographs are copyrighted, are kept out of version control, and you must supply
+> your own copies (see `assets/README.md`). The images in `previews/` are transformative terminal-art
+> renderings of those references. The song is not included or played by this program.
 
 ---
 
 ## Quick start (Windows 10/11, Windows Terminal, Python 3.11+)
 
 ```powershell
-cd E:\dev-projects\bond-python
+git clone https://github.com/n-allen1/james-bond-ascii-animation
+cd james-bond-ascii-animation
 py -3.12 -m venv .venv                 # a regular python.org Python (see note below)
 .\.venv\Scripts\python -m pip install -r requirements.txt
 .\.venv\Scripts\python main.py --record
 ```
 
-> **Note:** on this machine plain `python` resolves to the MSYS2/MinGW build, which has no
-> NumPy/Pillow wheels. Use the venv above (or `py -3.12`).
+> **Note:** if `python` on your PATH is an MSYS2/MinGW build, it has no NumPy/Pillow wheels and
+> `pip install` will try to compile them. Use the venv above (or `py -3.12`).
 
-Reference photographs live in `assets/` (see `assets/README.md`): `daniel_craig.avif`,
-`daniel_craig_full_shot.png` (the wide shot), `robert_pattinson.webp`.
+**You must supply the reference photographs** (they are not in this repository). Put three images in
+`assets/` named `daniel_craig.*` (close-up), `daniel_craig_full_shot.*` (wide shot) and
+`robert_pattinson.*` (portrait); PNG, JPG, WebP and AVIF are accepted. See `assets/README.md`.
+To try the pipeline without them, run with `--placeholder` (abstract stand-ins, not likenesses).
 
 ### Recording checklist
 1. Windows Terminal, **maximise / F11**, font **Cascadia Mono** (it has the Braille block; Consolas
