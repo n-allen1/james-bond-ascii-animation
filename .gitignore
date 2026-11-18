@@ -2,3 +2,10 @@
 __pycache__/
 *.pyc
 dumps/
+
+# Reference photographs are copyrighted: keep them local, never commit them
+assets/*.avif
+assets/*.webp
+assets/*.png
+assets/*.jpg
+assets/*.jpeg
