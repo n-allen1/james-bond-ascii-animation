@@ -9,3 +9,6 @@ assets/*.webp
 assets/*.png
 assets/*.jpg
 assets/*.jpeg
+
+# Terminal-art preview renders derive from copyrighted stills: keep them local
+previews/

@@ -11,8 +11,7 @@ You screen-record it with your phone and lay the song over it afterwards.
 > featured. *James Bond*, *007*, *No Time to Die* and related names, characters, images and music are the
 > property of their respective owners. No original film frames, photographs or audio are included in this
 > repository: the reference photographs are copyrighted, are kept out of version control, and you must supply
-> your own copies (see `assets/README.md`). The images in `previews/` are transformative terminal-art
-> renderings of those references. The song is not included or played by this program.
+> your own copies (see `assets/README.md`). The song is not included or played by this program.
 
 ---
 
@@ -79,8 +78,8 @@ That was the wrong tool. It has been replaced.
   body to the full composition while the sunset glow swells toward the strike.
 * An **ASCII-letter glyph-matching engine** (real font bitmaps, ramp + contour glyphs) is also included
   (`--style glyph`, stills only). It was evaluated against braille on the same frames and rejected: at ~70
-  columns the likeness dissolves into symbols. `previews/CHECKPOINT_all.png` shows the comparison
-  (top row braille, middle row simulated phone view, bottom row glyph engine).
+  columns the likeness dissolves into symbols. Reproduce the comparison on your own photos with
+  `--preview craig --compare`, or `--dump 6.6 --style braille` vs `--dump 6.6 --style glyph`.
 
 ### The ending (retimeable)
 The animation now finishes at **57.5 s** (fully black on the last frame) instead of 60 s, so it lands before the
@@ -103,8 +102,8 @@ strength for ~2.6 s (was ~1.2 s) and is visible for ~4.4 s.
 ### Pattinson reveal: refined vs baseline
 `scenes/pattinson.py` is the **refined** reveal; the original look is preserved as
 `scenes/pattinson_baseline.py` (also git tag `pattinson-baseline-v1`). Switch with `--pattinson baseline`
-or `PATTINSON_STYLE` in `config/settings.py`. Side-by-side: `previews/pattinson_baseline_vs_refined.png`,
-progression: `previews/pattinson_refined_sequence.png`.
+or `PATTINSON_STYLE` in `config/settings.py`. Compare them with `--dump 40,44,47.6 --pattinson baseline`
+vs `--pattinson refined`.
 
 * **Identity emerges gradually.** The opening keeps the baseline's low-detail, mysterious look. From ~42 % of
   the scene a top-to-bottom light sweep and a detail ramp add definition *only inside facial-feature regions*
@@ -170,7 +169,6 @@ config/settings.py   timings, presets, portrait tuning (face, eyes, focus, feath
 renderer/            terminal, ascii (style registry), glyphs (braille + glyph engines), portraits, camera, dump
 effects/             lighting, particles (007), explosion, transitions (easing)
 scenes/              craig (1-3), legacy (4-5), pattinson (6), titles (7), timeline
-previews/            quality checkpoint renders
 ```
 
 ### Tuning
