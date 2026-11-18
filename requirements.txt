@@ -1,0 +1,7 @@
+# Python 3.11+.  AVIF photos need Pillow >= 11.3 (decoder is built in).
+pillow>=11.3
+numpy>=1.26
+
+# Optional: automatic face detection / framing for photos other than the two
+# supplied references.  Not needed with the coordinates in config/settings.py.
+# opencv-python-headless>=4.9

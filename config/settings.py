@@ -1,0 +1,93 @@
+"""Central configuration: timing, music cues, rendering presets, portrait tuning.
+
+Everything you are likely to tweak lives here.  Scene code never hard-codes a
+time in seconds - it derives every cue from SCENE_TIMINGS / EXPLOSION_PEAK.
+"""
+
+# --------------------------------------------------------------------------
+# Timing  (all values are ANIMATION seconds, measured from frame 0)
+# --------------------------------------------------------------------------
+SONG_START_SECONDS = 182.0          # 3:02 of the official recording
+ANIMATION_DURATION = 60.0
+
+SCENE_TIMINGS = {
+    "craig_reveal":     (0.0, 7.0),    # Scene 1 - the last look
+    "camera_pullback":  (7.0, 17.0),   # Scene 2 - the final stand
+    "explosion":        (17.0, 21.0),  # Scene 3 - no time to die
+    "blackout":         (21.0, 27.0),  # Scene 4 - darkness
+    "legacy_007":       (27.0, 33.0),  # Scene 5 - the legacy
+    "pattinson_reveal": (33.0, 48.0),  # Scene 6 - a new Bond
+    "final_title":      (48.0, 60.0),  # Scene 7 - the name lives on
+}
+EXPLOSION_PEAK = 19.0               # animation seconds (== song 3:21 by default)
+
+# --------------------------------------------------------------------------
+# Presentation
+# --------------------------------------------------------------------------
+FPS = 30
+COUNTDOWN_SECONDS = 5               # --record only; NOT part of the 60 s runtime
+CELL_ASPECT = 2.0                   # terminal cell height / width (most fonts ~2.0)
+
+# The animation is composed inside a centred "stage" with this width/height
+# pixel ratio, so a vertical phone frame can capture everything important.
+STAGE_ASPECT = 0.75                 # 3:4 portrait.  Use --aspect 1.78 for 16:9.
+
+# Rendering style: braille (stippled dot characters, default) | blocks (legacy fallback)
+DEFAULT_STYLE = "braille"
+
+# Quality presets: maximum stage height in terminal rows (None = use all rows)
+QUALITY = {
+    "low":      {"max_rows": 34},
+    "balanced": {"max_rows": 48},   # recording preset: big, readable cells
+    "high":     {"max_rows": None}, # as dense as the terminal allows
+}
+DEFAULT_QUALITY = "balanced"
+MIN_TERMINAL = (60, 30)             # (cols, rows) below which we refuse to start
+
+# Cells whose colour changes by less than this (0-255 per channel) are not
+# rewritten.  Cuts terminal traffic a lot; 2-3 is invisible in practice.
+DIRTY_THRESHOLD = 3
+
+# --------------------------------------------------------------------------
+# Portraits.  Coordinates are normalised (0..1) inside the CROPPED image.
+#   crop       (l, t, r, b) in the source photo, or None = auto/full image
+#   face       centre of the face            eyes   midpoint between the eyes
+#   face_w     face width / cropped image width
+#   anchor     where a "cover" fit is centred when the photo's aspect differs
+#                from the stage (Pattinson: keep the gun in frame)
+# Use  python main.py --preview craig --guides  to see these as overlays.
+# --------------------------------------------------------------------------
+PORTRAITS = {
+    # Coordinates below were set by eye from the supplied reference photos
+    # (assets/daniel_craig.avif 1600x800, assets/robert_pattinson.webp 1000x667).
+    # closeup_w     fraction of the photo's width visible in the opening close-up
+    # closeup_eye_y where the eyes sit vertically in that close-up (0 top .. 1 bottom)
+    "craig": {
+        "files": ("daniel_craig",),
+        "crop": None,
+        "face": (0.46, 0.45), "eyes": (0.42, 0.29), "face_w": 0.40,
+        "anchor": (0.5, 0.5), "head_ratio": 0.9, "closeup_w": 0.53, "closeup_eye_y": 0.36,
+        "gamma": 1.0, "local_contrast": 0.45, "sharpen": 0.5,
+        "saturation": 1.08, "focus": (0.45, 0.40, 0.26, 0.40),   # cx, cy, rx, ry
+        "feather": (0.05, 0.09, 0.07), "dim_outside": 0.55,
+    },
+    "pattinson": {
+        "files": ("robert_pattinson",),
+        "crop": None,
+        "face": (0.65, 0.40), "eyes": (0.62, 0.43), "face_w": 0.30,
+        "anchor": (0.70, 0.5),      # window slides right so the sight, hand and face are framed
+        "gamma": 0.92, "local_contrast": 0.55, "sharpen": 0.65,
+        "saturation": 0.95, "focus": (0.66, 0.42, 0.17, 0.32),
+    },
+    # Craig's wide shot (assets/daniel_craig_full_shot.png, 1588x741).  Bond stands at the left third.
+    "craig_wide": {
+        "files": ("daniel_craig_full_shot",),
+        "crop": None,
+        "face": (0.20, 0.27), "eyes": (0.20, 0.26), "face_w": 0.035,
+        "anchor": (0.0, 0.5),
+        "gamma": 1.0, "local_contrast": 0.8, "sharpen": 0.5, "equalize": 0.2,
+        "saturation": 1.0, "focus": (0.20, 0.58, 0.10, 0.40),
+        "feather": (0.04, 0.16, 0.025), "dim_outside": 0.30,
+    },
+}
+ASSET_EXTENSIONS = (".png", ".jpg", ".jpeg", ".webp", ".avif", ".bmp", ".tif", ".tiff")
