@@ -38,6 +38,9 @@ class Portrait:
     source: str
     closeup_w: float = 0.0
     closeup_eye_y: float = 0.4
+    photo_detail: object = None   # MipImage: photo with extra definition inside the feature regions
+    weapon_img: object = None     # MipImage: capped, cool-tinted weapon rim layer (additive)
+    feat: object = None           # MipImage: R = feature mask
 
 
 def find_photo(name):
@@ -148,6 +151,46 @@ def load_portrait(name, allow_placeholder=False, verbose=True):
     arr = np.clip(gray + (arr - gray) * cfg["saturation"], 0, 1)
     photo = Image.fromarray((arr * 255 + 0.5).astype(np.uint8))
 
+    # ---- optional refinement: feature-local detail + a subordinate weapon layer -------------------
+    detail_img = weapon_img = feat_img = None
+    if cfg.get("features"):
+        uu, vv = xx / w, yy / h
+
+        def region(spec):
+            m = np.zeros((h, w), np.float32)
+            for cx, cy, rx, ry, wt in spec.values():
+                g = np.exp(-((((uu - cx) / rx) ** 2 + ((vv - cy) / ry) ** 2) ** 1.4)) * wt
+                m = 1 - (1 - m) * (1 - g)
+            return m
+        Fm = region(cfg["features"])
+        lum0 = luma(arr)
+        # lift the shadow side (left eye, brow, nose) just inside the features, then sharpen them
+        lift = np.clip(((lum0 + 0.03) ** 0.70) / (lum0 + 0.03), 1.0, 2.6)
+        arr_d = arr * (1 + Fm * 0.9 * (lift - 1))[..., None]
+        # tonal room: compress the very top of the lit face so brow / eye / nostril / mouth can separate
+        # from the cheek and forehead (this LOWERS highlights; overall exposure is not raised)
+        hi = np.clip((luma(arr_d) - 0.50) / 0.50, 0, 1)
+        arr_d = arr_d * (1 - 0.40 * focus * hi)[..., None]
+        lum1 = luma(arr_d)
+        rad2 = max(2, int(max(w, h) / 330))
+        dog = lum1 - box_blur(lum1, rad2 * 2)                      # fine definition (features)
+        dogb = lum1 - box_blur(lum1, max(6, int(max(w, h) / 70)))  # facial planes: cheekbone, jaw, nose bridge
+        arr_d = np.clip(arr_d + (dog * 2.0 * Fm + dogb * 0.9 * focus)[..., None], 0, 1)
+        detail_img = Image.fromarray((arr_d * 255 + 0.5).astype(np.uint8))
+
+        if cfg.get("weapon"):
+            Wm = region(cfg["weapon"])
+            ll = luma(arr) ** 0.45                                  # drag the near-black gun out of the dark
+            edge = np.abs(ll - box_blur(ll, max(4, int(max(w, h) / 90))))
+            wl = np.clip(0.22 * ll + 0.75 * np.clip(edge * 3.6, 0, 1), 0, 1) * Wm
+            ref = np.percentile(wl[Wm > 0.5], 99) if (Wm > 0.5).any() else 1.0
+            wl = np.clip(wl / max(ref, 1e-3), 0, 1) * cfg.get("weapon_cap", 0.4)
+            steel = np.array([0.72, 0.84, 1.0], np.float32)         # cool steel
+            weapon_img = Image.fromarray((np.clip(wl[..., None] * steel, 0, 1) * 255 + 0.5).astype(np.uint8))
+            feat_img = Image.fromarray((np.stack([Fm, Wm, np.zeros_like(Fm)], -1) * 255 + 0.5).astype(np.uint8))
+        else:
+            feat_img = Image.fromarray((np.stack([Fm, np.zeros_like(Fm), np.zeros_like(Fm)], -1) * 255 + 0.5).astype(np.uint8))
+
     # ---- masks ---------------------------------------------------------------
     u, v = xx / w, yy / h
     fs, ft, fb = cfg.get("feather", (0.05, 0.05, 0.05))      # fade widths (fraction of image width): sides, top, bottom
@@ -163,4 +206,6 @@ def load_portrait(name, allow_placeholder=False, verbose=True):
 
     return Portrait(name, MipImage(photo), MipImage(masks_img), w, h, face, eyes, face_w,
                     cfg["anchor"], placeholder, source,
-                    cfg.get("closeup_w", 0.0), cfg.get("closeup_eye_y", 0.4))
+                    cfg.get("closeup_w", 0.0), cfg.get("closeup_eye_y", 0.4),
+                    MipImage(detail_img) if detail_img else None, MipImage(weapon_img) if weapon_img else None,
+                    MipImage(feat_img) if feat_img else None)

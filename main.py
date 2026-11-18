@@ -52,6 +52,7 @@ def parse_args():
     p.add_argument("--scene", choices=list(settings.SCENE_TIMINGS), help="play only this scene")
     p.add_argument("--start", type=float, default=0.0, help="start playback at this animation time (seconds)")
     p.add_argument("--cues", action="store_true", help="print the scene/music cue table and exit")
+    p.add_argument("--pattinson", choices=("refined", "baseline"), default=None, help="Pattinson reveal version (default from config; baseline = v1 look)")
     p.add_argument("--stats", action="store_true", help="print frame statistics after playback")
     p.add_argument("--placeholder", action="store_true", help="TEST ONLY: use abstract stand-ins if photos are missing")
     p.add_argument("--dump", metavar="T[,T...]", help="write PNG frames at these animation times and exit")
@@ -79,7 +80,8 @@ def make_timeline(args, term_size, portraits):
     if args.scale != 1.0:      # re-centre in the real terminal
         layout.row0 = (term_size[1] - layout.rows) // 2
         layout.col0 = (term_size[0] - layout.cols) // 2
-    return Timeline(layout, portraits, args.brightness, args.contrast, args.sharpen, mono=args.no_color)
+    return Timeline(layout, portraits, args.brightness, args.contrast, args.sharpen, mono=args.no_color,
+                    pattinson=getattr(args, "pattinson", None))
 
 
 def virtual_size(args):
@@ -122,6 +124,7 @@ def preview_states(name, st):
     pa, pb = st.window("pattinson_reveal")
     D = pb - pa
     return [("Pattinson - partial shadow", pa + 0.30 * D), ("Pattinson - light across the face", pa + 0.55 * D),
+            ("Pattinson - identity emerging", pa + 0.70 * D), ("Pattinson - peak recognisability", pa + 0.86 * D),
             ("Pattinson - completed reveal", pb - 0.01)]
 
 

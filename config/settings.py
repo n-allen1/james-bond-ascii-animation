@@ -10,6 +10,9 @@ time in seconds - it derives every cue from SCENE_TIMINGS / EXPLOSION_PEAK.
 SONG_START_SECONDS = 182.0          # 3:02 of the official recording
 ANIMATION_DURATION = 60.0
 
+# Pattinson reveal: "refined" (feature detail + legible weapon) or "baseline" (the v1 look, kept for A/B)
+PATTINSON_STYLE = "refined"
+
 SCENE_TIMINGS = {
     "craig_reveal":     (0.0, 7.0),    # Scene 1 - the last look
     "camera_pullback":  (7.0, 17.0),   # Scene 2 - the final stand
@@ -78,6 +81,27 @@ PORTRAITS = {
         "anchor": (0.70, 0.5),      # window slides right so the sight, hand and face are framed
         "gamma": 0.92, "local_contrast": 0.55, "sharpen": 0.65,
         "saturation": 0.95, "focus": (0.66, 0.42, 0.17, 0.32),
+        # --- refined reveal (scenes/pattinson.py).  Regions are soft ellipses in photo coordinates
+        #     (cx, cy, rx, ry, weight), read off the shadow-lifted reference photograph.
+        "features": {
+            "eye_r":   (0.665, 0.415, 0.042, 0.022, 1.0),
+            "eye_l":   (0.560, 0.470, 0.040, 0.021, 0.9),
+            "brow_r":  (0.675, 0.375, 0.064, 0.020, 0.9),
+            "brow_l":  (0.560, 0.435, 0.052, 0.018, 0.8),
+            "nose":    (0.625, 0.540, 0.032, 0.095, 0.8),
+            "cheek_r": (0.735, 0.500, 0.056, 0.078, 0.6),
+            "mouth":   (0.695, 0.655, 0.062, 0.022, 0.7),
+            "jaw":     (0.705, 0.725, 0.110, 0.040, 0.7),
+            "hair":    (0.660, 0.120, 0.185, 0.090, 0.6),
+            "ear":     (0.780, 0.370, 0.030, 0.075, 0.4),
+        },
+        "weapon": {                      # suppressor, slide + sight, weapon light, gripping hand
+            "suppressor": (0.160, 0.600, 0.175, 0.085, 1.0),
+            "slide":      (0.400, 0.580, 0.110, 0.150, 1.0),
+            "light":      (0.335, 0.780, 0.036, 0.046, 0.5),
+            "hand":       (0.540, 0.800, 0.095, 0.230, 1.0),
+        },
+        "weapon_cap": 0.55,              # max luminance of the weapon layer (the face stays brighter)
     },
     # Craig's wide shot (assets/daniel_craig_full_shot.png, 1588x741).  Bond stands at the left third.
     "craig_wide": {

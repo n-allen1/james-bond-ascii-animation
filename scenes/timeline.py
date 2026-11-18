@@ -10,6 +10,7 @@ from scenes.base import Stage
 from scenes.craig import CraigScene
 from scenes.legacy import LegacyScene
 from scenes.pattinson import PattinsonScene
+from scenes.pattinson_baseline import PattinsonBaseline
 from scenes.titles import TitleScene
 
 
@@ -53,7 +54,7 @@ _BAYER4 = (np.array([[0, 8, 2, 10], [12, 4, 14, 6], [3, 11, 1, 9], [15, 7, 13, 5
 
 class Timeline:
     def __init__(self, layout: Layout, portraits, brightness=1.0, contrast=1.0, sharpen=0.35,
-                 timings=None, peak=None, mono=False):
+                 timings=None, peak=None, mono=False, pattinson=None):
         kw = {}
         if timings:
             kw["timings"] = timings
@@ -64,7 +65,8 @@ class Timeline:
         self.brightness, self.contrast, self.sharpen, self.mono = brightness, contrast, sharpen, mono
         self.craig = CraigScene(self.st)
         self.legacy = LegacyScene(self.st)
-        self.pattinson = PattinsonScene(self.st)
+        which = pattinson or settings.PATTINSON_STYLE
+        self.pattinson = PattinsonBaseline(self.st) if which == "baseline" else PattinsonScene(self.st)
         self.titles = TitleScene(self.st)
         ph, pw = layout.ph, layout.pw
         self.dither = np.tile(_BAYER4, (ph // 4 + 1, pw // 4 + 1))[:ph, :pw, None]

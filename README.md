@@ -71,6 +71,26 @@ That was the wrong tool. It has been replaced.
   columns the likeness dissolves into symbols. `previews/CHECKPOINT_all.png` shows the comparison
   (top row braille, middle row simulated phone view, bottom row glyph engine).
 
+### Pattinson reveal: refined vs baseline
+`scenes/pattinson.py` is the **refined** reveal; the original look is preserved as
+`scenes/pattinson_baseline.py` (also git tag `pattinson-baseline-v1`). Switch with `--pattinson baseline`
+or `PATTINSON_STYLE` in `config/settings.py`. Side-by-side: `previews/pattinson_baseline_vs_refined.png`,
+progression: `previews/pattinson_refined_sequence.png`.
+
+* **Identity emerges gradually.** The opening keeps the baseline's low-detail, mysterious look. From ~42 % of
+  the scene a top-to-bottom light sweep and a detail ramp add definition *only inside facial-feature regions*
+  (eyes, brows, nose, cheekbone, mouth, jaw, hairline, ear - `PORTRAITS["pattinson"]["features"]`). The very top of the
+  lit face is compressed so features have tonal room (highlights go down, not up). Peak detail holds ~3 s
+  (t ≈ 45–48 s) before the title fade.
+* **The weapon reads, subordinate to the face.** The camera starts slightly wider (so the long suppressor is in
+  frame while it is dark) and pushes in on the face. A separate, capped (`weapon_cap`), cool-tinted rim layer lifts the
+  suppressor, slide + sight, weapon light and gripping hand out of the black; the travelling light band catches it,
+  it is most legible with the face at the peak, then settles. Weapon glints are held below the face's highlights.
+* **Not changed:** black background, overall exposure, dot style, pose, timeline, Craig's scenes, the explosion.
+* **Known trade-off:** at the peak the push-in still crops the suppressor's tip; the sight, slide, grip and hand carry
+  the "holding a pistol" read. A wider end window (`WINDOW_END` in `scenes/pattinson.py`) shows more barrel at the cost of a
+  smaller face.
+
 ### Style options
 | `--style` | Use |
 |---|---|
@@ -94,6 +114,7 @@ That was the wrong tool. It has been replaced.
 | `--brightness` `--contrast` `--sharpen` | Final grade |
 | `--song-offset S` · `--scene NAME` · `--start T` | Cue display shift · play one scene · start at T s |
 | `--dump 6.6,16.6 [--style S] [--size 120x50]` | Write font-rendered PNG frames to `dumps/` |
+| `--pattinson refined\|baseline` | Pattinson reveal version (default `refined`, set in `config/settings.py`) |
 | `--stats` | Print frames drawn / slow frames after playback |
 | `--cues` · `--placeholder` | Print the cue table · test-only stand-ins if photos are missing |
 
