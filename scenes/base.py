@@ -16,8 +16,9 @@ class Stage:
     portraits: dict         # name -> Portrait
     timings: dict = field(default_factory=lambda: dict(settings.SCENE_TIMINGS))
     peak: float = settings.EXPLOSION_PEAK
-    duration: float = settings.ANIMATION_DURATION
+    duration: float = field(default_factory=lambda: settings.ANIMATION_DURATION)
     noise: NoiseField = field(default_factory=lambda: NoiseField(seed=4))
+    ending: dict = field(default_factory=lambda: dict(settings.ENDING_CUES))   # scene-7 cue times (seconds from window start)
 
     @property
     def aspect(self):

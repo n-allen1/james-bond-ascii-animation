@@ -36,7 +36,7 @@ class PattinsonBaseline:
 
     def _camera(self, t, pa, pb, fb):
         p, s, st = self.p, self.s, self.st
-        e = smootherstep(pa, pb + 0.25 * (fb - pb), t)
+        e = smootherstep(pa, pb + 3.0, t)          # push-in tail: fixed, independent of the ending length
         z = lerp(1.0, 1.07, e)
         W, H = p.w * s, p.h * s
         fx, fy = max(W - VIEW_UNITS * st.aspect, 0), max(H - VIEW_UNITS, 0)
@@ -112,5 +112,6 @@ class PattinsonBaseline:
         img += glow(buf, 1, 0.6)
 
         # fade to black as the title scene begins
-        fade = 1 - smoothstep(fa + 0.03 * (fb - fa), fa + 0.42 * (fb - fa), t)
+        pf0, pf1 = st.ending["portrait_fade"]
+        fade = 1 - smoothstep(fa + pf0, fa + pf1, t)
         return img * fade

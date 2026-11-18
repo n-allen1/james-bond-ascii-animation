@@ -115,3 +115,48 @@ PORTRAITS = {
     },
 }
 ASSET_EXTENSIONS = (".png", ".jpg", ".jpeg", ".webp", ".avif", ".bmp", ".tif", ".tiff")
+
+# --------------------------------------------------------------------------
+# The ending (scene 7).  All cues are SECONDS relative to the start of the "final_title" window
+# (48.0 s).  Pattinson's reveal itself (33-48 s) is not touched by any of this.
+#
+#   portrait_fade  Pattinson fades to black
+#   t1_in/t1_out   "NO TIME TO DIE" fades in / dissolves
+#   t2_in/t2_out   "007 WILL RETURN" fades in / fades to black (t2_out end == end of the animation)
+#
+# ENDING = "original"  the 60 s ending exactly as first delivered
+# ENDING = "early"     finishes ENDING_ADVANCE seconds earlier (default 2.5 s -> 57.5 s total).  The
+#                      transition between the reveal and the title is shortened and the title cues
+#                      are shifted earlier; the title animations themselves are not sped up, and
+#                      "007 WILL RETURN" holds at full brightness for ~2.3 s.  Sensible range 1.0-3.5 s.
+# CLI:  --ending original|early   --ending-advance SECONDS
+# --------------------------------------------------------------------------
+ENDING = "early"
+ENDING_ADVANCE = 2.5
+
+ORIGINAL_ENDING = dict(duration=12.0, portrait_fade=(0.36, 5.04), t1_in=(3.6, 5.52), t1_out=(7.44, 8.88),
+                       t2_in=(8.4, 9.96), t2_out=(10.8, 12.0))
+
+
+def resolve_ending(name=None, advance=None):
+    """Return the cue table (seconds from the start of the final_title window) for an ending."""
+    name = name or ENDING
+    if name == "original":
+        return dict(ORIGINAL_ENDING)
+    adv = ENDING_ADVANCE if advance is None else advance
+    D = ORIGINAL_ENDING["duration"] - adv
+    t2_in0 = D - 4.5                                   # "007 WILL RETURN": 1.0 s in, ~2.3 s full, 1.2 s out
+    return dict(duration=D, portrait_fade=(0.3, 2.9), t1_in=(1.9, 2.9),
+                t1_out=(t2_in0 - 0.4, t2_in0 + 0.5), t2_in=(t2_in0, t2_in0 + 1.0), t2_out=(D - 1.2, D))
+
+
+def apply_ending(name=None, advance=None):
+    """(Re)compute ENDING_CUES, the final_title window and the total duration."""
+    global ENDING_CUES, ANIMATION_DURATION
+    ENDING_CUES = resolve_ending(name, advance)
+    start = SCENE_TIMINGS["final_title"][0]
+    SCENE_TIMINGS["final_title"] = (start, start + ENDING_CUES["duration"])
+    ANIMATION_DURATION = start + ENDING_CUES["duration"]
+
+
+apply_ending()

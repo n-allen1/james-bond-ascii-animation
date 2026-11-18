@@ -40,7 +40,7 @@ Reference photographs live in `assets/` (see `assets/README.md`): `daniel_craig.
 | 4 Darkness | 0:21–0:27 | 3:23–3:29 |
 | 5 The Legacy (007 assembles) | 0:27–0:33 | 3:29–3:35 |
 | 6 A New Bond (Pattinson emerges) | 0:33–0:48 | 3:35–3:50 |
-| 7 The Name Lives On (titles) | 0:48–1:00 | 3:50–4:02 |
+| 7 The Name Lives On (titles) | 0:48–0:57.5 | 3:50–3:59.5 |
 
 **Suggested music start: 3:02 · Explosion peak: animation 0:19 / music 3:21.**
 Peak = `EXPLOSION_PEAK`, windows = `SCENE_TIMINGS` in `config/settings.py`; every internal cue is derived from them.
@@ -70,6 +70,24 @@ That was the wrong tool. It has been replaced.
   (`--style glyph`, stills only). It was evaluated against braille on the same frames and rejected: at ~70
   columns the likeness dissolves into symbols. `previews/CHECKPOINT_all.png` shows the comparison
   (top row braille, middle row simulated phone view, bottom row glyph engine).
+
+### The ending (retimeable)
+The animation now finishes at **57.5 s** (fully black on the last frame) instead of 60 s, so it lands before the
+second verse of the TikTok audio. Pattinson's reveal (33–48 s) is untouched; only the hand-over to the titles is
+shorter and the title cues start earlier (they are shifted, not sped up). "007 WILL RETURN" now holds at full
+strength for ~2.6 s (was ~1.2 s) and is visible for ~4.4 s.
+
+| | Original | Early (default) |
+|---|---|---|
+| Pattinson fully faded | 53.0 s | 50.9 s |
+| NO TIME TO DIE (in → out) | 51.6–56.9 s | 49.9–53.5 s |
+| 007 WILL RETURN (in → fully black) | 56.4–60.0 s | 53.0–57.5 s |
+
+* Compare: `python main.py --ending original` (the exact 60 s ending, verified frame-for-frame) vs `--ending early`.
+* Shift it: `--ending-advance 3.0` (seconds earlier than the original; sensible 1.0–3.5), or set `ENDING` /
+  `ENDING_ADVANCE` in `config/settings.py`.
+* Edit individual cues: `ORIGINAL_ENDING` and `resolve_ending()` in `config/settings.py` (seconds from 48.0 s);
+  no animation code needs to change.
 
 ### Pattinson reveal: refined vs baseline
 `scenes/pattinson.py` is the **refined** reveal; the original look is preserved as

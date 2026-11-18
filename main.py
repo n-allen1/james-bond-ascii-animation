@@ -53,6 +53,8 @@ def parse_args():
     p.add_argument("--start", type=float, default=0.0, help="start playback at this animation time (seconds)")
     p.add_argument("--cues", action="store_true", help="print the scene/music cue table and exit")
     p.add_argument("--pattinson", choices=("refined", "baseline"), default=None, help="Pattinson reveal version (default from config; baseline = v1 look)")
+    p.add_argument("--ending", choices=("early", "original"), default=None, help="ending version: early (default, config) or original (60 s)")
+    p.add_argument("--ending-advance", type=float, default=None, metavar="S", help="with --ending early: finish S seconds earlier than the original (default 2.5)")
     p.add_argument("--stats", action="store_true", help="print frame statistics after playback")
     p.add_argument("--placeholder", action="store_true", help="TEST ONLY: use abstract stand-ins if photos are missing")
     p.add_argument("--dump", metavar="T[,T...]", help="write PNG frames at these animation times and exit")
@@ -254,6 +256,8 @@ def play(term, tl, disp, fps, t_start, t_end):
 
 def main():
     args = parse_args()
+    if args.ending or args.ending_advance is not None:
+        settings.apply_ending(args.ending, args.ending_advance)
     timings = dict(settings.SCENE_TIMINGS)
     if args.cues:
         print_cues(timings, settings.EXPLOSION_PEAK, settings.SONG_START_SECONDS + args.song_offset)
